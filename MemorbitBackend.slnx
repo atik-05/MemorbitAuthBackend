@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Memorbit.Application/Memorbit.Application.csproj" Id="64175be2-189d-4a24-846d-5d7021b307a8" />
+  <Project Path="Memorbit.Domain/Memorbit.Domain.csproj" Id="9197c8be-51f6-472e-8c56-3de883141447" />
+  <Project Path="Memorbit.Infrastructure/Memorbit.Infrastructure.csproj" Id="5969de28-5e5a-404d-969b-fd2aef754e22" />
+  <Project Path="Memorbit.Presentation/Memorbit.Presentation.csproj" Id="66115199-12f7-4ab3-b3b3-1acb87aed64b" />
+  <Project Path="Memorbit/Memorbit.csproj" />
+</Solution>

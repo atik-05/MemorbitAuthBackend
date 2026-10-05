@@ -49,7 +49,7 @@ if (existing.IsRevoked)
 }
 ```
 
-**The race condition:** early on, refresh was a plain read-check-write. Fire two refresh requests with the same token at nearly the same instant (a flaky mobile connection retrying, or a client bug double-firing) and both could pass the "is this token valid" check before either one wrote its revocation — two valid new token pairs from one old one.
+**The race condition:** early on, refresh was a plain read-check-write. Fire two refresh requests with the same token at nearly the same instant and both could pass the "is this token valid" check before either one wrote its revocation — two valid new token pairs from one old one.
 
 The fix is a `Serializable` transaction around the whole read-validate-rotate sequence. Under `Serializable`, PostgreSQL detects the conflicting concurrent transactions and forces one to fail and retry rather than let both commit.
 
@@ -72,7 +72,24 @@ options.AddPolicy("auth-sensitive", httpContext =>
         }));
 ```
 
-This isn't a replacement for a WAF or a dedicated bot-mitigation service — it's a cheap, zero-dependency first line of defense that stops naive automated abuse without adding infrastructure.
+---
+
+## User Lockout after failed login attempt
+
+If user try to login with incorrect credentials for several times, the account is locked out (for 15 minutes). It prevents brute-force attacks.
+
+```csharp
+services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.User.AllowedUserNameCharacters =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+
+        // ...
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        options.Lockout.AllowedForNewUsers = true;
+    })
+```
 
 ---
 
